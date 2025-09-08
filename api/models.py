@@ -18,3 +18,23 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+
+class QrCode(models.Model):
+    resident = models.ForeignKey(User, on_delete=models.CASCADE)
+    qr = models.FileField(
+        upload_to='qrCodes/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['jpg', 'jpeg', 'png'])]
+    )
+    
+
+class ReliefGoods(models.Model):
+    name = models.TextField()
+    claimed_by = models.ManyToManyField(User, blank=True)
+    date_issued = models.DateTimeField(auto_now_add=True)
+    
+
+

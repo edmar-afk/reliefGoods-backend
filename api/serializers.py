@@ -1,20 +1,22 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, QrCode, ReliefGoods
 from django.db import models
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["purok", "address", "profile_picture"]
+        fields = ['purok', 'address', 'family_members', 'profile_picture']
+        
+class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile']
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=True)
@@ -39,3 +41,26 @@ class RegisterSerializer(serializers.ModelSerializer):
             purok=profile_data.get("purok"),
         )
         return user
+    
+    
+class ResidentSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile']
+
+
+class QrCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QrCode
+        fields = ['id', 'resident', 'qr']
+        
+
+class ReliefGoodsSerializer(serializers.ModelSerializer):
+    claimed_by = UserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ReliefGoods
+        fields = ['id', 'name', 'claimed_by', 'date_issued']
+        read_only_fields = ['date_issued']
