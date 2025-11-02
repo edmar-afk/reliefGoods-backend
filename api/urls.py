@@ -24,5 +24,7 @@ urlpatterns = [
     path('users/', views.AllUsersProfileView.as_view(), name='all-users-profile'),
     
     path('profile/<int:user_id>/upload-picture/', views.UploadProfilePictureView.as_view(), name='upload-profile-picture'),
+    
+    path('users/delete/<int:pk>/', views.DeleteUserView.as_view(), name='delete-user'),
 
 ]
